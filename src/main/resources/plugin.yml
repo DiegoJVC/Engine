@@ -1,0 +1,6 @@
+name: ${project.name}
+version: ${project.version}
+author: CobelPvP Development Team
+main: com.cobelpvp.engine.Engine
+softdepend: [Atheneum]
+load: STARTUP

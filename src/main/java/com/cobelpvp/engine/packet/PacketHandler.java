@@ -47,7 +47,7 @@ public final class PacketHandler {
                     e.printStackTrace();
                 }
             }
-        }, "Bridge - Packet Subscribe Thread");
+        }, "Engine - Packet Subscribe Thread");
         subscribeThread.setDaemon(true);
         subscribeThread.start();
     }

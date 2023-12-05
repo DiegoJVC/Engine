@@ -18,7 +18,7 @@ public class UnbanAllCommand {
         for (Profile profile : Profile.getProfileMap().values()) {
             profile.getPunishments().clear();
             profile.save();
-            Engine.getInstance().getRedis().sendPacket(new ClearPunishmentsRedisCheck(profile.getId()));
+            Engine.getInstance().getRedis().sendPacket(new ClearPunishmentsRedisCheck(profile.getUuid()));
             System.out.printf("Removing all the punishments (Bans-Mutes-Kicks-Warnings)");
         }
     }

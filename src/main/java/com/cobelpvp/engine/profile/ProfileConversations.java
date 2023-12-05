@@ -33,7 +33,7 @@ public class ProfileConversations {
             Conversation conversation = conversations.get(target.getUniqueId());
 
             if (conversation == null) {
-                conversation = new Conversation(profile.getId(), target.getUniqueId());
+                conversation = new Conversation(profile.getUuid(), target.getUniqueId());
             }
 
             return conversation;

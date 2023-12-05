@@ -67,7 +67,7 @@ public class GrantListener implements Listener {
                         procedure.finish();
                         event.getPlayer().sendMessage(ChatColor.GREEN + "The grant has been removed.");
 
-                        Engine.getInstance().getRedis().sendPacket(new DeleteGrantRedisCheck(procedure.getRecipient().getId(), procedure.getGrant()));
+                        Engine.getInstance().getRedis().sendPacket(new DeleteGrantRedisCheck(procedure.getRecipient().getUuid(), procedure.getGrant()));
                     } else {
                         procedure.cancel();
                     }

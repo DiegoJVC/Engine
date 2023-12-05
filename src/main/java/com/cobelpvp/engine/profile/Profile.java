@@ -35,7 +35,7 @@ public class Profile {
 
     @Getter private static Map<UUID, Profile> profileMap = new HashMap<>();
     private static MongoCollection<Document> collection = Engine.getInstance().getMongoDatabase().getCollection("profiles");
-    private final UUID id;
+    private final UUID uuid;
     private boolean loaded;
     private String displayName;
     private String address;
@@ -50,16 +50,18 @@ public class Profile {
     private Location lastFreezeLocation;
     private int reports;
     private OGrant activeGrant;
+    private List<String> permissions;
     private final List<OGrant> grants;
     private final List<Punishment> punishments;
 
-    public Profile(String displayName, UUID id) {
-        this.id = id;
+    public Profile(String displayName, UUID uuid) {
+        this.uuid = uuid;
         this.displayName = displayName;
         this.alts = new ArrayList<>();
         this.grants = new ArrayList<>();
         this.punishments = new ArrayList<>();
         this.options = new ProfileOptions();
+        this.permissions = new ArrayList<>();
         this.conversations = new ProfileConversations(this);
         this.ipAddresses = new ArrayList<>();
 
@@ -67,7 +69,7 @@ public class Profile {
     }
 
     public Player getPlayer() {
-        return Bukkit.getPlayer(id);
+        return Bukkit.getPlayer(uuid);
     }
 
     public String getColoredUsername() {
@@ -85,8 +87,8 @@ public class Profile {
     }
 
     public void addAlt(Profile altProfile) {
-        if (!this.alts.contains(altProfile.getId().toString())) {
-            this.alts.add(altProfile.getId().toString());
+        if (!this.alts.contains(altProfile.getUuid().toString())) {
+            this.alts.add(altProfile.getUuid().toString());
         }
     }
 
@@ -147,7 +149,7 @@ public class Profile {
     }
 
     public void load() {
-        Document document = collection.find(Filters.eq("id", id.toString())).first();
+        Document document = collection.find(Filters.eq("id", uuid.toString())).first();
 
         if (document != null) {
             if (displayName == null) displayName = document.getString("displayName");
@@ -162,6 +164,10 @@ public class Profile {
             alts = document.get("alts", List.class);
             if (alts == null) {
                 alts = new ArrayList<>();
+            }
+
+            if (document.getString("permissions") != null) {
+                permissions = Engine.GSON.fromJson(document.getString("permissions"), Engine.LIST_STRING_TYPE);
             }
 
             Document optionsDocument = (Document) document.get("options");
@@ -206,7 +212,7 @@ public class Profile {
     public void save() {
         Document document = new Document();
         document.put("displayName", displayName);
-        document.put("id", id.toString());
+        document.put("id", uuid.toString());
         document.put("firstSeen", firstSeen);
         document.put("lastSeen", lastSeen);
         document.put("lastServer", lastServer);
@@ -233,8 +239,10 @@ public class Profile {
 
         for (Punishment punishment : this.punishments) punishmentList.add(Punishment.SERIALIZER.serialize(punishment));
 
+        document.put("permissions", Engine.GSON.toJson(permissions, Engine.LIST_STRING_TYPE));
+
         document.put("punishments", punishmentList.toString());
-        collection.replaceOne(Filters.eq("id", id.toString()), document, new ReplaceOptions().upsert(true));
+        collection.replaceOne(Filters.eq("id", uuid.toString()), document, new ReplaceOptions().upsert(true));
     }
 
 
@@ -254,6 +262,10 @@ public class Profile {
 
         player.recalculatePermissions();
 
+        for (String permission : permissions) {
+            attachment.setPermission(permission, true);
+        }
+
         String displayName = activeGrant.getRank().getGamePrefix() + player.getName();
         String coloredName = getActiveGrant().getRank().getGameColor() + player.getName();
 
@@ -262,6 +274,32 @@ public class Profile {
         player.setDisplayName(displayName);
 
         player.setPlayerListName(coloredName);
+    }
+
+    public void updatePermissions() {
+        Player player = Bukkit.getPlayer(uuid);
+        // Clear any permissions set for this player by this plugin
+        for (PermissionAttachmentInfo attachmentInfo : player.getEffectivePermissions()) {
+            if (attachmentInfo.getAttachment() == null || attachmentInfo.getAttachment().getPlugin() == null ||
+                    !attachmentInfo.getAttachment().getPlugin().equals(Engine.getInstance())) {
+                continue;
+            }
+
+            attachmentInfo.getAttachment().getPermissions()
+                    .forEach((permission, value) -> attachmentInfo.getAttachment().unsetPermission(permission));
+        }
+
+        PermissionAttachment attachment = player.addAttachment(Engine.getInstance());
+
+        for (String permission : activeGrant.getRank().getRankPermissions()) {
+            attachment.setPermission(permission, true);
+        }
+
+        for (String permission : permissions) {
+            attachment.setPermission(permission, true);
+        }
+
+        player.recalculatePermissions();
     }
 
     public static Profile getByUuid(UUID uuid) {

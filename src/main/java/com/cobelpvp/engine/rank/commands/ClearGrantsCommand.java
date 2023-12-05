@@ -26,6 +26,6 @@ public class ClearGrantsCommand {
 
         player.sendMessage(ColorText.translate(profile.getDisplayName() + "&6:&e cleared grants"));
 
-        Engine.getInstance().getRedis().sendPacket(new ClearGrantsRedisCheck(profile.getId()));
+        Engine.getInstance().getRedis().sendPacket(new ClearGrantsRedisCheck(profile.getUuid()));
     }
 }

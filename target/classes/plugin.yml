@@ -1,0 +1,6 @@
+name: Engine
+version: 2.0
+author: CobelPvP Development Team
+main: com.cobelpvp.engine.Engine
+softdepend: [Atheneum]
+load: STARTUP

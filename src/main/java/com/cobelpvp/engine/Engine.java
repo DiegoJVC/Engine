@@ -5,7 +5,6 @@ import com.cobelpvp.engine.checks.checks.*;
 import com.cobelpvp.engine.commands.parameter.EnchantParameterType;
 import com.cobelpvp.engine.commands.parameter.GameModeParameterType;
 import com.cobelpvp.engine.commands.staff.CmdSetSlots;
-import com.cobelpvp.engine.holograms.HologramManager;
 import com.cobelpvp.engine.moderator.profile.ModeratorProfile;
 import com.cobelpvp.engine.moderator.qchecks.RedisQChecksListener;
 import com.cobelpvp.engine.moderator.qchecks.checks.*;
@@ -72,7 +71,6 @@ public class Engine extends JavaPlugin {
     private static Map<String, ItemStack[]> armor;
     private static Map<String, ItemStack[]> items;
     private MongoDatabase modSuiteMongo;
-    private HologramManager hologramManager;
     public static final Type LIST_STRING_TYPE = new TypeToken<List<String>>() {}.getType();
 
     public Engine() {
@@ -143,8 +141,6 @@ public class Engine extends JavaPlugin {
         if (this.configValues.isUsePackets()) {
             new HookManager();
         }
-
-        this.hologramManager = new HologramManager();
 
         if (this.configValues.isUseFilter()) {
             new FilterManager().setupFilter();
@@ -258,10 +254,6 @@ public class Engine extends JavaPlugin {
 
     public MongoDatabase getMongoDatabase() {
         return mongoDatabase;
-    }
-
-    public HologramManager getHologramManager() {
-        return this.hologramManager;
     }
 
     public Config getSettings() {

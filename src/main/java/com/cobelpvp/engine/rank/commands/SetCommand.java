@@ -41,7 +41,7 @@ public class SetCommand {
         profile.save();
         profile.activateNextGrant();
 
-        Engine.getInstance().getRedis().sendPacket(new AddGrantRedisCheck(profile.getId(), grant));
+        Engine.getInstance().getRedis().sendPacket(new AddGrantRedisCheck(profile.getUuid(), grant));
 
         assert rank != null;
         sender.sendMessage(ColorText.translate("&6Granted rank &e" + rank.getFormattedName() + " &6to &c" + TeamsUUIDCache.name(uuid)));

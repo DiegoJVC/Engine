@@ -37,7 +37,7 @@ public class InfoButton extends Button {
             lore.add(ColorText.translate("&6First Seen: &c" + firstSeen));
             lore.add(ColorText.translate("&6Country: &c" + profile.getCountry()));
             lore.add(ColorText.translate("&6Last Server: &c" + (profile.getLastServer() == null ? "&cNone" : profile.getLastServer())));
-            lore.add(ColorText.translate("&6UUID: &c" + profile.getId()));
+            lore.add(ColorText.translate("&6UUID: &c" + profile.getUuid()));
         } else {
             lore.add(ColorText.translate("&cProfile not currently loaded"));
         }

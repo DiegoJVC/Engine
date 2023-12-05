@@ -24,7 +24,7 @@ public class WipePunishCommand {
         profile.getPunishments().clear();
         profile.save();
 
-        Engine.getInstance().getRedis().sendPacket(new ClearPunishmentsRedisCheck(profile.getId()));
+        Engine.getInstance().getRedis().sendPacket(new ClearPunishmentsRedisCheck(profile.getUuid()));
 
         sender.sendMessage(ChatColor.YELLOW + ChatColor.BOLD.toString() + "Cleared!");
     }

@@ -120,7 +120,7 @@ public class ProfileListener implements Listener {
             return;
         }
 
-        Profile.getProfileMap().put(profile.getId(), profile);
+        Profile.getProfileMap().put(profile.getUuid(), profile);
     }
 
     @EventHandler
